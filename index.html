@@ -1,24 +1,296 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sayfa Sayfa</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f9f9f9;
-            color: #333;
-            text-align: center;
-            padding: 50px;
-        }
-        h1 {
-            color: #ff6600;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sayfa Sayfa</title>
+<style>
+body { font-family: 'Segoe UI', sans-serif; margin:0; display:flex; min-height:100vh; background:#f4f1ea; }
+
+/* Sidebar */
+.sidebar { width:250px; background:#f8efe4; padding:20px; box-shadow:2px 0 5px rgba(0,0,0,0.1); display:flex; flex-direction:column; justify-content:space-between; }
+.sidebar h3 { font-size:20px; margin-bottom:20px; border-bottom:2px solid #d4b483; padding-bottom:8px; color:#5a4634; font-weight:bold; letter-spacing:1px; }
+.sidebar ul { list-style:none; padding:0; }
+.sidebar ul li { margin:15px 0; padding:10px; border-radius:8px; background:#fffef9; cursor:pointer; transition: transform 0.2s, background 0.2s; }
+.sidebar ul li:hover { background:#e6d3b3; transform:translateX(10px); }
+
+/* Monthly target */
+.monthly-sidebar { margin-top:20px; background:#fffef9; padding:10px; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
+.monthly-sidebar h4 { margin:0 0 10px 0; font-size:16px; color:#5a4634; text-align:center; }
+.monthly-sidebar ul { list-style:none; padding:0; max-height:200px; overflow-y:auto; }
+.monthly-sidebar ul li { display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px solid #d4b483; font-size:14px; }
+.monthly-sidebar input[type="text"] { width:100%; padding:5px; margin-bottom:5px; border-radius:5px; border:1px solid #ccc; }
+.monthly-sidebar button { width:100%; padding:5px; border:none; border-radius:5px; background:#d4b483; cursor:pointer; margin-bottom:5px; }
+.monthly-sidebar button:hover { background:#c49a6c; }
+
+/* Main */
+.main { flex:1; display:flex; flex-direction:column; padding:20px; position:relative; }
+.header { display:flex; justify-content:center; align-items:center; margin-bottom:30px; position:relative; }
+
+/* Sayfa Sayfa Başlığı */
+.title {
+  font-family:'Georgia', serif;
+  font-weight:bold;
+  text-align:left;
+  line-height:0.9;
+  position:relative;
+  display:inline-block;
+  cursor:pointer;
+}
+
+.page-top, .page-bottom {
+  display:inline-block;
+  background: linear-gradient(90deg,#d4b483,#c49a6c,#f0e0c0);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  text-shadow:2px 2px 8px rgba(0,0,0,0.3);
+}
+
+.page-top { font-size:52px; }
+.page-bottom { font-size:50px; position:relative; left:50px; top:10px; }
+
+.title:hover .page-top { animation: wave-top 1s infinite; }
+.title:hover .page-bottom { animation: wave-bottom 1s infinite; }
+
+@keyframes wave-top {
+  0%,100%{ transform: translateY(0px) rotate(0deg); }
+  25%{ transform: translateY(-4px) rotate(-1deg); }
+  50%{ transform: translateY(-2px) rotate(1deg); }
+  75%{ transform: translateY(-3px) rotate(-1deg); }
+}
+@keyframes wave-bottom {
+  0%,100%{ transform: translateY(0px) rotate(0deg); }
+  25%{ transform: translateY(3px) rotate(1deg); }
+  50%{ transform: translateY(5px) rotate(-1deg); }
+  75%{ transform: translateY(2px) rotate(1deg); }
+}
+
+/* Add Button */
+.add-btn { position:absolute; right:0; background:#d4b483; border:none; padding:10px 16px; font-size:24px; cursor:pointer; border-radius:50%; font-weight:bold; }
+.add-btn:hover { background:#c49a6c; }
+
+/* Books grid */
+.books { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:10px; margin-bottom:30px; }
+.book-card { background:#fffef9; border:1px solid #e0d6c3; border-radius:10px; padding:8px; box-shadow:2px 2px 8px rgba(0,0,0,0.15); text-align:center; transition: transform 0.3s, box-shadow 0.3s; position:relative; perspective:1000px; }
+.book-card:hover { transform: translateY(-6px) rotateX(3deg) rotateY(2deg); box-shadow: 5px 10px 15px rgba(0,0,0,0.3); }
+.book-card img { max-width:100%; border-radius:6px; height:160px; object-fit:cover; transition: transform 0.3s; }
+.book-card:hover img { transform: scale(1.03) rotateZ(1deg); }
+.book-card h4 { margin:6px 0 4px 0; font-size:14px; color:#5a4634; }
+.book-card p { font-size:12px; color:#7a654c; margin:2px 0; }
+
+/* Status, Action, Category gizli, hoverda görünür */
+.book-card .status-btn,
+.book-card .action-btn,
+.book-card p { display: none; }
+.book-card:hover .status-btn,
+.book-card:hover .action-btn,
+.book-card:hover p { display:inline-block; }
+
+.book-card .status-btn.okunacak { background:#d4b483; color:#fff; }
+.book-card .status-btn.okundu { background:#4caf50; color:#fff; }
+
+.book-card .action-btn { margin:3px 3px 0 3px; padding:2px 5px; border:none; border-radius:5px; cursor:pointer; background:#d4b483; color:#fff; font-size:11px; }
+.book-card .action-btn:hover { background:#c49a6c; }
+
+/* Footer */
+.footer { background:#f8efe4; padding:15px; text-align:center; font-size:14px; color:#5a4634; border-top:1px solid #d4b483; margin-top:auto; }
+
+/* Popup */
+.popup { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); justify-content:center; align-items:center; z-index:100; }
+.popup-content { background:white; padding:20px; border-radius:10px; width:300px; }
+.popup-content input, .popup-content select { width:100%; padding:8px; margin:5px 0 10px 0; border:1px solid #ccc; border-radius:5px; }
+.popup-content button { background:#d4b483; border:none; padding:8px 12px; cursor:pointer; border-radius:5px; margin-right:5px; }
+.popup-content button:hover { background:#c49a6c; }
+</style>
 </head>
 <body>
-    <h1>Sayfa Sayfa</h1>
-    <p>Hoş geldiniz! Bu sayfa GitHub Pages ile yayınlandı.</p>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="sidebar-top">
+        <h3>Kategoriler</h3>
+        <ul>
+            <li data-category="📚 Felsefe Rafı">📚 Felsefe Rafı</li>
+            <li data-category="📖 Edebiyat Dünyası">📖 Edebiyat Dünyası</li>
+            <li data-category="🌏 Dünya Klasikleri">🌏 Dünya Klasikleri</li>
+            <li data-category="💡 Kişisel Gelişim">💡 Kişisel Gelişim</li>
+            <li data-category="Tümü">Tümü</li>
+        </ul>
+    </div>
+    <div class="monthly-sidebar">
+        <h4>Aylık Okuma Hedefi</h4>
+        <input type="text" id="monthlyInput" placeholder="Yeni hedef ekle...">
+        <button onclick="addMonthlyGoal()">Ekle</button>
+        <ul id="monthlyList"></ul>
+    </div>
+</div>
+
+<!-- Main -->
+<div class="main">
+    <div class="header">
+        <div class="title">
+            <span class="page-top">Sayfa</span><br>
+            <span class="page-bottom">Sayfa</span>
+        </div>
+        <button class="add-btn" onclick="openPopup('add')">+</button>
+    </div>
+
+    <div class="books" id="bookList"></div>
+
+    <div class="footer" id="footer">
+        📌 Öneri: Her gün 20 sayfa okuyarak küçük bir adım at!
+    </div>
+</div>
+
+<!-- Popup -->
+<div class="popup" id="popup">
+    <div class="popup-content">
+        <h3 id="popupTitle">Kitap Ekle</h3>
+        <input type="text" id="bookTitle" placeholder="Kitap Adı">
+        <input type="text" id="bookImage" placeholder="Kapak Görseli URL">
+        <select id="bookCategory">
+            <option value="📚 Felsefe Rafı">📚 Felsefe Rafı</option>
+            <option value="📖 Edebiyat Dünyası">📖 Edebiyat Dünyası</option>
+            <option value="🌏 Dünya Klasikleri">🌏 Dünya Klasikleri</option>
+            <option value="💡 Kişisel Gelişim">💡 Kişisel Gelişim</option>
+        </select>
+        <button id="saveBtn" onclick="saveBook()">Ekle</button>
+        <button onclick="closePopup()">Kapat</button>
+    </div>
+</div>
+
+<script>
+let editIndex = null;
+
+function loadData(){
+    const books = JSON.parse(localStorage.getItem('books')||'[]');
+    books.forEach(b=>{ addBookCard(b.title,b.image,b.category,b.status,false); });
+    const targets = JSON.parse(localStorage.getItem('monthlyGoals')||'[]');
+    targets.forEach(t=>{ addMonthlyGoalToList(t.text,t.done,false); });
+}
+
+function openPopup(mode,index=null){
+    document.getElementById('popup').style.display='flex';
+    if(mode==='edit'){
+        editIndex=index;
+        const card=document.getElementById('bookList').children[index];
+        document.getElementById('bookTitle').value=card.querySelector('h4').textContent;
+        document.getElementById('bookImage').value=card.querySelector('img').src;
+        document.getElementById('bookCategory').value=card.getAttribute('data-category');
+        document.getElementById('popupTitle').textContent='Kitap Düzenle';
+        document.getElementById('saveBtn').textContent='Kaydet';
+    }else{
+        editIndex=null;
+        document.getElementById('bookTitle').value='';
+        document.getElementById('bookImage').value='';
+        document.getElementById('bookCategory').value='📚 Felsefe Rafı';
+        document.getElementById('popupTitle').textContent='Kitap Ekle';
+        document.getElementById('saveBtn').textContent='Ekle';
+    }
+}
+function closePopup(){ document.getElementById('popup').style.display='none'; }
+
+function saveBook(){
+    const title=document.getElementById('bookTitle').value.trim();
+    const image=document.getElementById('bookImage').value || 'https://via.placeholder.com/150x200';
+    const category=document.getElementById('bookCategory').value;
+    if(!title) return;
+    if(editIndex!==null){
+        const card=document.getElementById('bookList').children[editIndex];
+        card.querySelector('h4').textContent=title;
+        card.querySelector('img').src=image;
+        card.setAttribute('data-category',category);
+        card.querySelector('p').textContent=category;
+    } else {
+        addBookCard(title,image,category,'okunacak',true);
+    }
+    closePopup();
+    saveBooksToStorage();
+}
+
+function addBookCard(title,image,category,status,save=true){
+    const bookList=document.getElementById('bookList');
+    const card=document.createElement('div');
+    card.classList.add('book-card');
+    card.setAttribute('data-category',category);
+    card.innerHTML=`<img src="${image}" alt="${title}">
+                    <h4>${title}</h4>
+                    <p>${category}</p>
+                    <button class="status-btn ${status}" onclick="toggleRead(this)">${status==='okunacak'?'Okunacak':'Okundu'}</button>
+                    <button class="action-btn" onclick="editBook(this)">Düzenle</button>
+                    <button class="action-btn" onclick="deleteBook(this)">Sil</button>`;
+    bookList.appendChild(card);
+}
+
+function editBook(btn){
+    const index=[...btn.parentElement.parentElement.children].indexOf(btn.parentElement);
+    openPopup('edit',index);
+    saveBooksToStorage();
+}
+function deleteBook(btn){ 
+    if(confirm('Bu kitabı silmek istediğine emin misin?')) {
+        btn.parentElement.remove(); 
+        saveBooksToStorage();
+    }
+}
+function toggleRead(btn){
+    if(btn.classList.contains('okunacak')){
+        btn.classList.remove('okunacak'); btn.classList.add('okundu'); btn.textContent='Okundu';
+    } else { btn.classList.remove('okundu'); btn.classList.add('okunacak'); btn.textContent='Okunacak'; }
+    saveBooksToStorage();
+}
+
+const categories = document.querySelectorAll('.sidebar ul li');
+categories.forEach(cat => {
+    cat.addEventListener('click', () => {
+        const selected = cat.getAttribute('data-category');
+        const books = document.querySelectorAll('.book-card');
+        books.forEach(book => {
+            if(selected==="Tümü" || book.getAttribute('data-category')===selected){
+                book.style.display="block";
+            } else book.style.display="none";
+        });
+    });
+});
+
+function saveBooksToStorage(){
+    const books=[];
+    document.querySelectorAll('.book-card').forEach(card=>{
+        books.push({
+            title: card.querySelector('h4').textContent,
+            image: card.querySelector('img').src,
+            category: card.getAttribute('data-category'),
+            status: card.querySelector('.status-btn').classList.contains('okundu')?'okundu':'okunacak'
+        });
+    });
+    localStorage.setItem('books',JSON.stringify(books));
+}
+
+function addMonthlyGoal(){
+    const input=document.getElementById('monthlyInput');
+    const val=input.value.trim();
+    if(!val) return;
+    addMonthlyGoalToList(val,false,true);
+    input.value='';
+}
+
+function addMonthlyGoalToList(text,done,save=true){
+    const ul=document.getElementById('monthlyList');
+    const li=document.createElement('li');
+    li.innerHTML=`<span>${text}</span><input type="checkbox" ${done?'checked':''} onchange="saveMonthlyGoals()"/>`;
+    ul.appendChild(li);
+    if(save) saveMonthlyGoals();
+}
+
+function saveMonthlyGoals(){
+    const goals=[];
+    document.querySelectorAll('#monthlyList li').forEach(li=>{
+        goals.push({text: li.querySelector('span').textContent, done: li.querySelector('input').checked});
+    });
+    localStorage.setItem('monthlyGoals',JSON.stringify(goals));
+}
+
+window.onload=loadData;
+</script>
 </body>
 </html>
